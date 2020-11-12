@@ -166,19 +166,24 @@ namespace DigiClassroom.Controllers
             if (ModelState.IsValid)
             {
                 string filename = null;
+                List<string> files = new List<string>();
                 if (model.BlackBoardViewModel.Files != null)
                 {
-                    string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "blackboard");
-                    filename = Guid.NewGuid().ToString() + "_" + model.BlackBoardViewModel.Files.FileName;
-                    string filePath = Path.Combine(uploadsFolder, filename);
-                    model.BlackBoardViewModel.Files.CopyTo(new FileStream(filePath, FileMode.Create));
+                    foreach (IFormFile file in model.BlackBoardViewModel.Files)
+                    {
+                        string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "blackboard");
+                        filename = Guid.NewGuid().ToString() + "_" + file.FileName;
+                        files.Add(filename);
+                        string filePath = Path.Combine(uploadsFolder, filename);
+                        file.CopyTo(new FileStream(filePath, FileMode.Create));
+                    }
                 }
                 BlackBoard newBoard = new BlackBoard
                 {
                     ClassroomId = Convert.ToInt32(model.BlackBoardViewModel.ClassId),
                     AppUserId = Id,
                     content = model.BlackBoardViewModel.content,
-                    FilesPaths = filename
+                    FilesPaths = string.Join(",", files)
                 };
                 _boardRepo.Add(newBoard);
             }

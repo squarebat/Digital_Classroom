@@ -10,7 +10,7 @@ namespace DigiClassroom
 {
     public static class CustomHelpers
     {
-        /*private const string urlRegEx = @"((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)";
+        private const string urlRegEx = @"((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)";
 
         public static MvcHtmlString DisplayWithLinksFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression)
         {
@@ -34,7 +34,7 @@ namespace DigiClassroom
         {
             Func<TModel, TProperty> func = expression.Compile();
             return func(htmlHelper.ViewData.Model).ToString();
-        }*/
+        }
         
     }
 }

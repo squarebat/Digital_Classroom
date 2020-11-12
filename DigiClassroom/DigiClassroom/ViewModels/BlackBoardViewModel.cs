@@ -10,6 +10,6 @@ namespace DigiClassroom.ViewModels
     {
         public string ClassId { get; set; }
         public string content { get; set; }
-        public IFormFile Files { get; set; }
+        public IFormFileCollection Files { get; set; }
     }
 }
