@@ -1,0 +1,78 @@
+﻿@model DigiClassroom.ViewModels.ClassroomHomeViewModel
+@inject Microsoft.AspNetCore.Identity.UserManager<AppUser> _userManager
+<h4>Black Board</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form enctype="multipart/form-data" asp-action="BlackBoard" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="BlackBoardViewModel.ClassId" type="hidden" value="@ViewData["ClassId"]" />
+            <div class="form-group">
+                <label asp-for="BlackBoardViewModel.content" class="control-label"></label>
+                <textarea asp-for="BlackBoardViewModel.content" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="BlackBoardViewModel.content" class="text-danger"></span>
+            </div>
+            <div class="form-group row">
+                <label asp-for="BlackBoardViewModel.Files" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <div class="custom-file">
+                        <input asp-for="BlackBoardViewModel.Files" class="form-control custom-file-input">
+                        <label class="custom-file-label">Choose File...</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            <script>
+                $(document).ready(function () {
+                    $('.custom-file-input').on("change", function () {
+                        var fileName = $(this).val().split("\\").pop();
+                        $(this).next('.custom-file-label').html(fileName);
+                    });
+                });
+            </script>
+
+        </form>
+    </div>
+</div>
+
+<div>
+    @foreach (var item in Model.BlackBoards)
+    {
+        var filePath = "~/blackboard/" + (item.FilesPaths ?? "");
+        var filename = item.FilesPaths.Substring(item.FilesPaths.IndexOf("_") + 1, item.FilesPaths.Length - item.FilesPaths.IndexOf("_") - 1);
+        var fileUrl = "https://localhost:44300" + "/blackboard/" + (item.FilesPaths ?? "");
+        AppUser user = await _userManager.FindByIdAsync(item.AppUserId);
+        <div class="content-block">
+            <h6>@user</h6>
+            <hr />
+            <p style="white-space: pre-wrap;">@Html.DisplayFor(modelItem => item.content)</p>
+            <a target="_blank" href="@fileUrl">
+                @filename
+            </a>
+            <br />
+            <a class="text-danger" asp-controller="Classroom" asp-action="DeleteBlackBoard" asp-route-id="@item.Id">Delete this Post</a>
+        </div>
+        <br />
+    }
+
+</div>
+<style>
+    .content-block {
+        border: 1px solid #dddddd;
+        border-radius: 20px;
+        padding: 20px;
+    }
+</style>
+<!--
+<a href=
+    "https://egov.ddit.ac.in/moodle/pluginfile.php?file=%2F28047%2Fassignsubmission_file%2Fsubmission_files%2F12623%2FMFP_Lab_03_CE126.pdf&amp;amp;forcedownload=1">
+    MFP_Lab_03_CE126.pdf
+</a>
+
+    <a target="_blank" href="https://drive.google.com/open?id=1bgTVzwPP-FDAlxFPEN_OQmvrRWvVihPF&amp;authuser=0"
+    title="Screenshot (1256).png"
+    data-focus-id="hSRGPd-https://drive.google.com/open?id=1bgTVzwPP-FDAlxFPEN_OQmvrRWvVihPF&amp;authuser=0">
+    </a>
+-->

@@ -1,0 +1,124 @@
+﻿
+@model DigiClassroom.ViewModels.ClassroomHomeViewModel
+
+@{
+    ViewData["Title"] = "Home";
+    ViewData["ClassId"] = Model.Classroom.ID;
+}
+<h2>@Html.DisplayFor(model => model.Classroom.title)</h2>
+<p>@Html.DisplayFor(model => model.Classroom.description)</p>
+<div class="row">
+    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <span>Room</span>
+            </h6>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <button class="nav-link btn test btn-custom" id="ViewBoard">
+                        Black Board
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link btn test btn-custom" id ="ViewLounge">
+                        Student's Lounge
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        Assignments
+                    </a>
+                </li>
+
+
+            </ul>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <span>Settings</span>
+            </h6>
+
+            <ul class="nav flex-column mb-2">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        Invite People
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        Edit Class
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="#">
+                        Delete Class
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+    <div class="col-md-10">
+        <div id="BlackBoard">
+            <partial name="_BlackBoardIndexPartial" view-data="ViewData"/>
+        </div>
+        <div id="StudentLounge">
+            <partial name="_StudentLounge" />
+        </div>
+    </div>
+</div>
+<style>
+    .btn.active.focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn:active:focus, .btn:focus {
+        outline: thin dotted;
+        outline-offset: -2px;
+    }
+    .test:focus {
+        outline: none !important;
+        border-color: transparent !important;
+    }
+    .btn-custom {
+        color: #000;
+        background-color: #f8f9fa;
+    }
+    .btn-custom:hover {
+        color: #fff;
+        background-color: #1b6ec2;
+    }
+    .btn-custom:focus, .btn-custom.focus {
+        color: #fff;
+        background-color: #1b6ec2;
+    }
+    
+    body .btn {
+        outline: 0;
+    }
+
+    .btn.active.focus,
+    .btn.active:focus,
+    .btn.focus,
+    .btn.focus:active,
+    .btn:active:focus,
+    .btn:focus {
+        outline: 0;
+        outline-offset: 0;
+        background-image: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $("#BlackBoard").show();
+        $("#StudentLounge").hide();
+
+        $("#ViewBoard").click(function () {
+            $("#BlackBoard").show();
+            $("#StudentLounge").hide();
+        });
+
+        $("#ViewLounge").click(function () {
+            $("#BlackBoard").hide();
+            $("#StudentLounge").show();
+        });
+    });
+</script>
+
