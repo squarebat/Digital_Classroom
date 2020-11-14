@@ -10,6 +10,9 @@ namespace DigiClassroom.Models.Repositories
     public interface IClassroomUserRepository
     {
         ClassroomUser Add(ClassroomUser classroomUser);
+        IEnumerable<ClassroomUser> GetClassroomMentors(int id);
+        IEnumerable<ClassroomUser> GetClassroomStudents(int id);
+
     }
     public class SQLClassroomUserRepository : IClassroomUserRepository
     {
@@ -24,6 +27,13 @@ namespace DigiClassroom.Models.Repositories
             context.SaveChanges();
             return classroomUser;
         }
-        
+        IEnumerable<ClassroomUser> IClassroomUserRepository.GetClassroomMentors(int id)
+        {
+            return context.ClassroomUsers.Where(cu => cu.Role == "Mentor" && cu.ClassroomId == id).Include(au => au.AppUser);
+        }
+        IEnumerable<ClassroomUser> IClassroomUserRepository.GetClassroomStudents(int id)
+        {
+            return context.ClassroomUsers.Where(cu => cu.Role == "Student" && cu.ClassroomId == id).Include(au => au.AppUser);
+        }
     }
 }

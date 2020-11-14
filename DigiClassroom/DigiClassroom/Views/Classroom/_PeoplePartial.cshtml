@@ -1,0 +1,26 @@
+﻿@model DigiClassroom.ViewModels.ClassroomHomeViewModel
+
+<h5>Mentors</h5>
+<hr />
+@foreach (var item in Model.ClassroomMentors)
+{
+    <p>@Html.DisplayFor(modelItem => item.AppUser.UserName)</p>
+    //@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+}
+<br />
+<h5>Students</h5>
+<hr />
+@if (Model.ClassroomStudents.Count() != 0)
+{
+    foreach (var item in Model.ClassroomStudents)
+    {
+        <p>@Html.DisplayFor(modelItem => item.AppUser.UserName)</p>
+        //@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+    }
+}
+else
+{
+    <span class="text-muted">It's silent right now. Invite some students over!</span>
+}
+
+

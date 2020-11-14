@@ -149,6 +149,8 @@ namespace DigiClassroom.Controllers
             ClassroomHomeViewModel chvm = new ClassroomHomeViewModel();
             chvm.Classroom = Classroom;
             chvm.BlackBoards = _boardRepo.GetClassBlackBoards(id);
+            chvm.ClassroomMentors = _classUserRepo.GetClassroomMentors(id);
+            chvm.ClassroomStudents = _classUserRepo.GetClassroomStudents(id);
             return View(chvm);
         }
         [HttpGet]
