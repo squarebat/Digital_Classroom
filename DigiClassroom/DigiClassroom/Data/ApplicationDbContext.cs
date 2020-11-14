@@ -17,8 +17,6 @@ namespace DigiClassroom.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity <BlackBoard>()
-                .Property(bb => bb.content).HasColumnType("CLOB");
             builder.Entity<ClassroomUser>().HasKey(cu => new { cu.ClassroomId, cu.AppUserId });
             builder.Entity<ClassroomUser>()
                 .HasOne<Classroom>(cu => cu.Classroom)

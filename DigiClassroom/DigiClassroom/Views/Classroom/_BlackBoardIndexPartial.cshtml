@@ -1,5 +1,7 @@
 ﻿@model DigiClassroom.ViewModels.ClassroomHomeViewModel
 @inject Microsoft.AspNetCore.Identity.UserManager<AppUser> _userManager
+@using DigiClassroom
+
 <h4>Black Board</h4>
 <hr />
 <div>
@@ -44,7 +46,7 @@
         <div class="content-block">
             <h6>@user</h6>
             <hr />
-            <p style="white-space: pre-wrap;">@Html.DisplayFor(modelItem => item.content)</p>
+            @CustomHelpers.DisplayWithLinksFor(item.content)
             @if (item.FilesPaths != null)
             {
                 string[] files = item.FilesPaths.Split(",");

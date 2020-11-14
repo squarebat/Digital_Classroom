@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using DigiClassroom.Models;
 using DigiClassroom.Models.Repositories;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Web.WebPages.Html;
 
 namespace DigiClassroom
 {
@@ -42,7 +44,6 @@ namespace DigiClassroom
             services.AddScoped<IClassroomRepository, SQLClassroomRepository>();
             services.AddScoped<IClassroomUserRepository, SQLClassroomUserRepository>();
             services.AddScoped<IBlackBoardRepository, SQLBlackBoardRepository>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

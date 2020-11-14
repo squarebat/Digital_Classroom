@@ -3,20 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.Mvc.Html;
 using Microsoft.AspNetCore.Html;
 using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
+
 namespace DigiClassroom
 {
     public static class CustomHelpers
     {
         private const string urlRegEx = @"((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)";
 
-        public static MvcHtmlString DisplayWithLinksFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression)
+        public static HtmlString DisplayWithLinksFor(string content)
         {
-            string content = GetContent<TModel, TProperty>(htmlHelper, expression);
             string result = ReplaceUrlsWithLinks(content);
-            return MvcHtmlString.Create(result);
+            TagBuilder tb = new TagBuilder("p");
+            tb.Attributes.Add("style", "white-space: pre-wrap;");
+            return new HtmlString(tb.ToString(TagRenderMode.StartTag)+result+ tb.ToString(TagRenderMode.EndTag));
         }
 
         private static string ReplaceUrlsWithLinks(string input)
@@ -25,7 +30,7 @@ namespace DigiClassroom
             string result = rx.Replace(input, delegate (Match match)
             {
                 string url = match.ToString();
-                return String.Format("<a href=\"{0}\">{0}</a>", url);
+                return String.Format("<a target=\"_blank\" href=\"{0}\">{0}</a>", url);
             });
             return result;
         }

@@ -13,7 +13,7 @@ using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Web;
 using System.IO;
 using DigiClassroom.ViewModels;
-
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 namespace DigiClassroom.Controllers
 {
     public class ClassroomController : Controller
@@ -24,9 +24,10 @@ namespace DigiClassroom.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
+        //private readonly System.Web.Mvc.HtmlHelper _htmlHelper;
         public ClassroomController(IClassroomRepository classRepo,IClassroomUserRepository classUser, 
             IBlackBoardRepository boardRepo, IHostingEnvironment hostingEnvironment,
-            UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+            UserManager<AppUser> userManager, SignInManager<AppUser> signInManager/*, System.Web.Mvc.HtmlHelper htmlHelper*/)
         {
             _classRepo = classRepo;
             _classUserRepo = classUser;
@@ -34,6 +35,7 @@ namespace DigiClassroom.Controllers
             _hostingEnvironment = hostingEnvironment;
             _userManager = userManager;
             _signInManager = signInManager;
+            //_htmlHelper = htmlHelper;
         }
         public ViewResult Index()
         {

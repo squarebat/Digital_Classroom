@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.8" />
@@ -23,5 +24,11 @@
   <ItemGroup>
     <Folder Include="wwwroot\blackboard\" />
   </ItemGroup>
+  
+<ItemGroup>
+  <Reference Include="System.Web">
+    <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\Microsoft\ADL Tools\2.4.6000.0\NetStandard\System.Web.dll</HintPath>
+  </Reference>
+</ItemGroup>
 
 </Project>
