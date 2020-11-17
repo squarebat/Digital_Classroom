@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using DigiClassroom.Models;
 using DigiClassroom.Models.Repositories;
+using DigiClassroom.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using System.Web;
 using Microsoft.AspNetCore.Http;
@@ -17,19 +18,32 @@ namespace DigiClassroom.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IClassroomRepository _classRepo;
+        private readonly IInviteRepository _inviteRepo;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, IClassroomRepository classRepo, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        public HomeController(ILogger<HomeController> logger, IClassroomRepository classRepo, IInviteRepository inviteRepo, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
         {
             _logger = logger;
             _classRepo = classRepo;
             _signInManager = signInManager;
             _userManager = userManager;
+            _inviteRepo = inviteRepo;
             //this.userID = Convert.ToInt32(_userManager.GetUserId(User));
         }
         public IActionResult Index()
         {
+            if (_signInManager.IsSignedIn(HttpContext.User))
+            {
+                var id = _userManager.GetUserId(HttpContext.User);
+                string user_email = _userManager.FindByIdAsync(id).Result.Email;
+                HomeViewModel hvm = new HomeViewModel
+                {
+                    Invites = _inviteRepo.GetUserInvites(user_email),
+                    Classrooms = _classRepo.GetAllClassrooms()
+                };
+                return View(hvm);
+            }
             return View();
         }
 

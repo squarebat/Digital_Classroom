@@ -11,7 +11,7 @@ namespace DigiClassroom.ViewModels
         public IEnumerable<BlackBoard> BlackBoards { get; set; }
         public IEnumerable<ClassroomUser> ClassroomMentors { get; set; }
         public IEnumerable<ClassroomUser> ClassroomStudents { get; set; }
-
+        public IEnumerable<Invite> StudentInvites { get; set; } 
         public BlackBoardViewModel BlackBoardViewModel { get; set; }
     }
 }

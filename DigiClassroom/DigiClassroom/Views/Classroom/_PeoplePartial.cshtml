@@ -8,7 +8,9 @@
     //@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
 }
 <br />
-<h5>Students</h5>
+<h5>
+    Students
+</h5>
 <hr />
 @if (Model.ClassroomStudents.Count() != 0)
 {
@@ -18,9 +20,45 @@
         //@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
     }
 }
-else
+else if (Model.StudentInvites.Count() == 0)
 {
-    <span class="text-muted">It's silent right now. Invite some students over!</span>
+    <span class="text-muted">It's silent right now. Invite some students over!</span><br/>
 }
+@foreach (var item in Model.StudentInvites)
+{
+    <p style="color : #CCCCCC">@item.Email (Invited)</p>
+}
+<br />
+<button title="Invite Students" type="button" class="btn btn-primary" data-toggle="modal" data-target="#StudentsModal">
+    Invite Students
+</button>
+
+<div class="modal fade" id="StudentsModal" tabindex="-1" role="dialog" aria-labelledby="StudentsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="StudentsModalLabel">Invite Students</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-action="" method="post">
+                <div class="modal-body">
+                    <span class="small text-muted">Enter email address. Seperate multiple email addresses by whitespace</span><br />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" id="ClassId" name="ClassId" value="@Model.Classroom.ID" />
+                    <div class="form-group">
+                        <input placeholder="Email(s)" name="emails" id="emails" type="text" class="form-control" />
+                        <span class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" asp-action="InviteStudents">Invite</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 

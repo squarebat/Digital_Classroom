@@ -14,6 +14,8 @@ using System.Web;
 using System.IO;
 using DigiClassroom.ViewModels;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using MailKit.Net.Smtp;
+using MimeKit;
 namespace DigiClassroom.Controllers
 {
     public class ClassroomController : Controller
@@ -21,21 +23,22 @@ namespace DigiClassroom.Controllers
         private readonly IClassroomRepository _classRepo;
         private readonly IClassroomUserRepository _classUserRepo;
         private readonly IBlackBoardRepository _boardRepo;
+        private readonly IInviteRepository _inviteRepo;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
         //private readonly System.Web.Mvc.HtmlHelper _htmlHelper;
         public ClassroomController(IClassroomRepository classRepo,IClassroomUserRepository classUser, 
-            IBlackBoardRepository boardRepo, IHostingEnvironment hostingEnvironment,
-            UserManager<AppUser> userManager, SignInManager<AppUser> signInManager/*, System.Web.Mvc.HtmlHelper htmlHelper*/)
+            IBlackBoardRepository boardRepo, IInviteRepository inviteRepo, IHostingEnvironment hostingEnvironment,
+            UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _classRepo = classRepo;
             _classUserRepo = classUser;
             _boardRepo = boardRepo;
+            _inviteRepo = inviteRepo;
             _hostingEnvironment = hostingEnvironment;
             _userManager = userManager;
             _signInManager = signInManager;
-            //_htmlHelper = htmlHelper;
         }
         public ViewResult Index()
         {
@@ -151,6 +154,7 @@ namespace DigiClassroom.Controllers
             chvm.BlackBoards = _boardRepo.GetClassBlackBoards(id);
             chvm.ClassroomMentors = _classUserRepo.GetClassroomMentors(id);
             chvm.ClassroomStudents = _classUserRepo.GetClassroomStudents(id);
+            chvm.StudentInvites = _inviteRepo.GetAllInvites(id);
             return View(chvm);
         }
         [HttpGet]
@@ -214,6 +218,82 @@ namespace DigiClassroom.Controllers
             BlackBoard bb = _boardRepo.GetBlackBoard(id);
             _boardRepo.Delete(bb.Id);
             return RedirectToAction("Home", new { id = bb.ClassroomId });
+        }
+        [HttpPost]
+        public IActionResult InviteStudents(string ClassId, string emails)
+        {
+            int id = Convert.ToInt32(ClassId);
+            Classroom classroom = _classRepo.GetClassroom(id);
+            AppUser user = _userManager.FindByIdAsync(_userManager.GetUserId(HttpContext.User)).Result;
+            string[] Emails = emails.Split(" ");
+            foreach (string email in Emails)
+            {
+                //Send Mail
+                string DigiClassEmailId = "admin email here";
+                string DigiClassPassword = "admin password here";
+                MimeMessage message = new MimeMessage();
+                MailboxAddress from = new MailboxAddress(user.UserName, DigiClassEmailId);
+                message.From.Add(from);
+
+                MailboxAddress to = new MailboxAddress("Student", email);
+                message.To.Add(to);
+
+                message.Subject = "Invite to "+classroom.title+" DigiClassroom";
+
+                BodyBuilder bodyBuilder = new BodyBuilder();
+                bodyBuilder.HtmlBody = "<div>" +
+                    "Hello Student," +
+                    "<br/><br/>" +
+                    "You've been invited to <b>" + classroom.title + "<b/>" +
+                    " DigiClassroom!" +
+                    "<br/><br/>" +
+                    "<a target=\"_blank\" style=\"color:#1b6ec2\" href=\"https://localhost:44300/Classroom/AcceptStudentInvite/" + classroom.ID + "\">Accept Invitation</a>&nbsp;&nbsp;" +
+                    "<a target=\"_blank\" style=\"color:#dc3545\" href=\"https://localhost:44300/Classroom/DeclineStudentInvite/" + classroom.ID + "\">Decline Invitation</a>" +
+                    "</div>";
+                message.Body = bodyBuilder.ToMessageBody();
+
+                SmtpClient client = new SmtpClient();
+                client.CheckCertificateRevocation = false;
+                client.Connect("smtp.gmail.com",465,true);
+                client.Authenticate(DigiClassEmailId,DigiClassPassword);
+                
+                client.Send(message);
+                client.Disconnect(true);
+                client.Dispose();
+                //Mail sent
+
+                Invite invite = new Invite
+                {
+                    ClassroomId = id,
+                    Email = email
+                };
+                _inviteRepo.Add(invite);
+            }
+            return RedirectToAction("Home", new { id = id });
+        }
+        public IActionResult AcceptStudentInvite(int id)
+        {
+            int classid = id; 
+            string userId = _userManager.GetUserId(HttpContext.User);
+            string useremail = _userManager.FindByIdAsync(userId).Result.Email;
+            ClassroomUser newClassUser = new ClassroomUser
+            {
+                ClassroomId = classid,
+                AppUserId = userId,
+                Role = "Student"
+            };
+            _classUserRepo.Add(newClassUser);
+            _inviteRepo.Delete(classid, useremail);
+            return RedirectToAction("Home", new { id = classid });
+        }
+
+        public IActionResult DeclineStudentInvite(int id)
+        {
+            int classid = id;
+            string userId = _userManager.GetUserId(HttpContext.User);
+            string useremail = _userManager.FindByIdAsync(userId).Result.Email;
+            _inviteRepo.Delete(classid, useremail);
+            return RedirectToAction("Index","Home");
         }
     }
 }
