@@ -6,18 +6,59 @@
 @inject UserManager<AppUser> UserManager
 @model DigiClassroom.ViewModels.HomeViewModel
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <a asp-controller="Classroom" asp-action="Create">Create classroom</a>
-</div>
 @if (SignInManager.IsSignedIn(User))
 {
-<div class="row">
-    <div class="col-sm-9">
-        <partial name="_ClassesPartial" />
+    <div class="row">
+        <div class="col-sm-9">
+            <partial name="_UserClassroomsPartial" />
+        </div>
+        <div class="col-sm-3">
+            <div class="light-grey-box">
+                <partial name="_NotificationsPartial" />
+            </div>
+        </div>
     </div>
-    <div class="col-sm-3 light-grey-box">
-        <partial name="_NotificationsPartial" />
-    </div>
-</div>
 }
+else
+{
+    <div class="custom-card" style="margin-top: 75px;">
+        <div class="row no-gutters">
+            <div class="col-sm-5">
+                <img src="~/duck.png" title="kurzgesagt-duck" class="card-img" alt="DigiClassroom">
+            </div>
+            <div class="col-sm-7">
+                <div class="card-body">
+                    <h4 class="card-title">Welcome to DigiClassroom</h4>
+                    <p class="card-text" style="font-size: 22px">
+                        DigiClassroom provides an immersive classroom experience for students and teachers.
+                        With numerous features adjacent to a real world classroom, interact seamlessly with your fellow classmates and students.
+                        Create classrooms, invite students to your class, or join other classrooms and enhance your learning experience.
+                        Get started today and make learning more fun than it ever was!
+                    </p>
+                    <span class="small text-muted">Image Courtesy: <a target="_blank" href="https://www.youtube.com/user/Kurzgesagt">Kurzgesagt</a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<style>
+    .light-grey-box {
+        background-color: #eeeeee !important;
+        padding: 20px;
+        border-radius: 5px;
+        margin-top: 80px;
+    }
+    .custom-card {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 0px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+    }
+</style>

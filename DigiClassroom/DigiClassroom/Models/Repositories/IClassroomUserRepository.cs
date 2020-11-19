@@ -14,7 +14,7 @@ namespace DigiClassroom.Models.Repositories
         IEnumerable<ClassroomUser> GetClassroomMentors(int id);
         IEnumerable<ClassroomUser> GetClassroomStudents(int id);
         IEnumerable<ClassroomUser> GetUserClassrooms(string userId);
-
+        ClassroomUser Delete(int classId, string userId);
     }
     public class SQLClassroomUserRepository : IClassroomUserRepository
     {
@@ -43,8 +43,17 @@ namespace DigiClassroom.Models.Repositories
         }
         IEnumerable<ClassroomUser> IClassroomUserRepository.GetUserClassrooms(string userId)
         {
-            return context.ClassroomUsers.Where(cu => cu.AppUserId == userId).Include(cu => cu.Classroom);
+            return context.ClassroomUsers.Where(cu => cu.AppUserId == userId).Include(cu => cu.Classroom).Include(cu => cu.AppUser);
         }
-
+        ClassroomUser IClassroomUserRepository.Delete(int classId, string userId)
+        {
+            ClassroomUser ClassroomUser = context.ClassroomUsers.Find(classId, userId);
+            if (ClassroomUser != null)
+            {
+                context.ClassroomUsers.Remove(ClassroomUser);
+                context.SaveChanges();
+            }
+            return ClassroomUser;
+        }
     }
 }

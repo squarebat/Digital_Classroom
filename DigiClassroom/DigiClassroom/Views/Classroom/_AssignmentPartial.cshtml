@@ -4,44 +4,46 @@
 
 <h4>Assignments</h4>
 <hr />
-<div>
-    <form enctype="multipart/form-data" asp-action="NewAssignment" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input asp-for="AssignmentViewModel.ClassId" type="hidden" value="@ViewData["ClassId"]" />
-        <div class="form-group">
-            <input placeholder="Title of Assignment here" asp-for="AssignmentViewModel.Title" class="form-control"/>
-            <span asp-validation-for="AssignmentViewModel.Title" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <textarea placeholder="Enter some description for your assignment" asp-for="AssignmentViewModel.Description" class="form-control" rows="5" cols="30"></textarea>
-            <span asp-validation-for="AssignmentViewModel.Description" class="text-danger"></span>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Upload Files:</label>
-            <div class="col-sm-10">
-                <div class="custom-file">
-                    <input asp-for="AssignmentViewModel.Files" class="form-control custom-file-input" multiple>
-                    <label class="custom-file-label">Choose Files...</label>
+@if (Model.ClassroomUserRole == "Mentor")
+{
+    <div>
+        <form enctype="multipart/form-data" asp-action="NewAssignment" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="AssignmentViewModel.ClassId" type="hidden" value="@ViewData["ClassId"]" />
+            <div class="form-group">
+                <input placeholder="Title of Assignment here" asp-for="AssignmentViewModel.Title" class="form-control"/>
+                <span asp-validation-for="AssignmentViewModel.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <textarea placeholder="Enter some description for your assignment" asp-for="AssignmentViewModel.Description" class="form-control" rows="5" cols="30"></textarea>
+                <span asp-validation-for="AssignmentViewModel.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Upload Files:</label>
+                <div class="col-sm-10">
+                    <div class="custom-file">
+                        <input asp-for="AssignmentViewModel.Files" class="form-control custom-file-input" multiple>
+                        <label class="custom-file-label">Choose Files...</label>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Post Assignment" class="btn btn-primary" />
-        </div>
-        <script>
-            $(document).ready(function () {
-                $('.custom-file input').change(function (e) {
-                    var files = [];
-                    for (var i = 0; i < $(this)[0].files.length; i++) {
-                        files.push($(this)[0].files[i].name);
-                    }
-                    $(this).next('.custom-file-label').html(files.join(', '));
+            <div class="form-group">
+                <input type="submit" value="Post Assignment" class="btn btn-primary" />
+            </div>
+            <script>
+                $(document).ready(function () {
+                    $('.custom-file input').change(function (e) {
+                        var files = [];
+                        for (var i = 0; i < $(this)[0].files.length; i++) {
+                            files.push($(this)[0].files[i].name);
+                        }
+                        $(this).next('.custom-file-label').html(files.join(', '));
+                    });
                 });
-            });
-        </script>
-    </form>
-</div>
-
+            </script>
+        </form>
+    </div>
+}
 <div>
     @foreach (var item in Model.Assignments)
     {
@@ -54,8 +56,16 @@
         @if (item.Files != null)
         {
             string[] files = item.Files.Split(",");
+            if (files.Count() >1 || (files.Count() ==1 && files[0].Length != 0))
+            {
+                <hr/>
+            }
             foreach (string file in files)
             {
+                if (file.Length == 0)
+                {
+                    continue;
+                }
                 var filePath = "~/posted_assignments/" + file;
                 var filename = file.Substring(file.IndexOf("_") + 1, file.Length - file.IndexOf("_") - 1);
                 var fileUrl = "https://localhost:44300" + "/posted_assignments/" + file;
@@ -65,20 +75,20 @@
                 <br />
             }
         }
+        <hr/>
         @if (Model.ClassroomUserRole == "Mentor")
         {
-            <br />
             <a class="text-primary" asp-action="ViewSubmissions" asp-route-id="@item.ID">View Submissions</a><br />
             <a class="text-danger" asp-controller="Classroom" asp-action="DeleteAssignment" asp-route-id="@item.ID">Delete this Assignment</a>
         }
         else
         {
-            <br />
             <a class="text-primary" asp-action="SubmitAssignment" asp-route-id="@item.ID">Submit Assignment</a><br />
             <a class="text-primary" asp-action="ViewSubmissions" asp-route-id="@item.ID">View Your Submissions</a><br />
         }
 
     </div>
+    <br/>
     }
 
 </div>

@@ -21,15 +21,18 @@ namespace DigiClassroom.Data
             builder.Entity<ClassroomUser>()
                 .HasOne<Classroom>(cu => cu.Classroom)
                 .WithMany(cu => cu.ClassroomUsers)
-                .HasForeignKey(cu => cu.ClassroomId);
+                .HasForeignKey(cu => cu.ClassroomId)
+                .OnDelete(DeleteBehavior.Cascade);
             builder.Entity<ClassroomUser>()
                 .HasOne<AppUser>(au => au.AppUser)
                 .WithMany(cu => cu.ClassroomUsers)
-                .HasForeignKey(cu => cu.AppUserId);
+                .HasForeignKey(cu => cu.AppUserId)
+                .OnDelete(DeleteBehavior.Cascade);
             builder.Entity<BlackBoard>()
                 .HasOne<ClassroomUser>(cu => cu.ClassroomUser)
                 .WithMany(bb => bb.BlackBoards)
-                .HasForeignKey(bb => new { bb.ClassroomId, bb.AppUserId });
+                .HasForeignKey(bb => new { bb.ClassroomId, bb.AppUserId })
+                .OnDelete(DeleteBehavior.Cascade);
         }
         public DbSet<Classroom> Classrooms { get; set; }
         public DbSet<ClassroomUser> ClassroomUsers { get; set; }

@@ -123,27 +123,18 @@ namespace DigiClassroom.Controllers
                 Class.title = model.title;
                 Class.description = model.description;
                 Classroom updatedClass = _classRepo.Update(Class);
-                return RedirectToAction("Index");
+                return RedirectToAction("Home", new { id = model.ID });
             }
             return View(model);
         }
-        [Authorize]
+       [Authorize]
 
-        [HttpGet]
-        public IActionResult Delete(int id)
+       [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(ClassroomHomeViewModel chvm)
         {
-            Classroom Class = _classRepo.GetClassroom(id);
-            if (Class == null)
-            {
-            }
-            return View(Class);
-        }
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            var Class = _classRepo.GetClassroom(id);
+            var Class = _classRepo.GetClassroom(chvm.Classroom.ID);
             _classRepo.Delete(Class.ID);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index","Home");
         }
         [HttpGet]
         public IActionResult Home(int id)
@@ -225,6 +216,7 @@ namespace DigiClassroom.Controllers
             }
             return View("BlackBoardDelete", bb);
         }
+        [Authorize]
         [HttpPost, ActionName("DeleteBlackBoard")]
         public IActionResult BlackBoardDeleteConfirmed(int id)
         {
@@ -352,6 +344,8 @@ namespace DigiClassroom.Controllers
             }
             return View(a);
         }
+        
+        [Authorize]
         [HttpPost, ActionName("DeleteAssignment")]
         public IActionResult AssignmentDeleteConfirmed(int id)
         {
@@ -442,5 +436,17 @@ namespace DigiClassroom.Controllers
             }
             return View(assignments);
         }
-    }
+        [Authorize]
+        [HttpPost, ActionName("LeaveClassroom")]
+        public IActionResult LeaveClassroomConfirmed(ClassroomHomeViewModel chvm)
+        {
+            string userId = null;
+            if (_signInManager.IsSignedIn(HttpContext.User))
+            {
+                userId = _userManager.GetUserId(HttpContext.User);
+                _classUserRepo.Delete(chvm.Classroom.ID, userId);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+    }    
 }

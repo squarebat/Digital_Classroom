@@ -29,10 +29,12 @@ else if (Model.StudentInvites.Count() == 0)
     <p style="color : #CCCCCC">@item.Email (Invited)</p>
 }
 <br />
-<button title="Invite Students" type="button" class="btn btn-primary" data-toggle="modal" data-target="#StudentsModal">
-    Invite Students
-</button>
-
+@if (Model.ClassroomUserRole == "Mentor")
+{
+    <button title="Invite Students" type="button" class="btn btn-primary" data-toggle="modal" data-target="#StudentsModal">
+        Invite Students
+    </button>
+}
 <div class="modal fade" id="StudentsModal" tabindex="-1" role="dialog" aria-labelledby="StudentsModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -44,18 +46,18 @@ else if (Model.StudentInvites.Count() == 0)
             </div>
             <form asp-action="" method="post">
                 <div class="modal-body">
-                    <span class="small text-muted">Enter email address. Seperate multiple email addresses by whitespace</span><br />
+                    <span class="small text-muted">Enter email address. Seperate multiple email addresses by whitespace</span><br /><br/>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" id="ClassId" name="ClassId" value="@Model.Classroom.ID" />
                     <div class="form-group">
                         <input placeholder="Email(s)" name="emails" id="emails" type="text" class="form-control" />
                         <span class="text-danger"></span>
                     </div>
-                </div>
+                </div>               
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button class="btn btn-primary" asp-action="InviteStudents">Invite</button>
-                </div>
+                </div>                
             </form>
         </div>
     </div>

@@ -4,33 +4,32 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>Classroom</h4>
+<h4>Create Your Own Classroom!</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-8">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="title" class="control-label"></label>
-                <input asp-for="title" class="form-control" />
+                <label asp-for="title" class="control-label">Title</label>
+                <input asp-for="title" class="form-control" placeholder="Give your Classroom a name"/>
                 <span asp-validation-for="title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="description" class="control-label"></label>
-                <input asp-for="description" class="form-control" />
+                <label asp-for="description" class="control-label">Description</label>
+                <textarea asp-for="description" class="form-control" rows="5" cols="30" 
+                          placeholder="Enter some description for your classroom"></textarea>
                 <span asp-validation-for="description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Let the learning Commence!" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Cancel</a>
 </div>
 
 @section Scripts {
