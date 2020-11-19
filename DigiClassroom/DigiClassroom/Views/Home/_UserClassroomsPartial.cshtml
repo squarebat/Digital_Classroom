@@ -22,7 +22,7 @@
         </div>
         <hr />
         <div class="card-body">
-            <a class="card-link" asp-controller="Classroom" asp-action="Home" asp-route-id="@classUser.ClassroomId">Go to Class</a>
+            <a class="card-link" asp-controller="Classroom" asp-action="Home" asp-route-id="@classUser.ClassroomId" asp-route-loadPartial="BlackBoard">Go to Class</a>
         </div>
     </div>
 }

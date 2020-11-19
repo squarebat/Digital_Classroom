@@ -95,7 +95,7 @@ namespace DigiClassroom.Controllers
                 };
                 _classUserRepo.Add(newClassUser);
 
-                return RedirectToAction("Home", new { id = newClass.ID });
+                return RedirectToAction("Home", new { id = newClass.ID, loadPartial = "BlackBoard" });
             }
             return View();
         }
@@ -123,7 +123,7 @@ namespace DigiClassroom.Controllers
                 Class.title = model.title;
                 Class.description = model.description;
                 Classroom updatedClass = _classRepo.Update(Class);
-                return RedirectToAction("Home", new { id = model.ID });
+                return RedirectToAction("Home", new { id = model.ID, loadPartial = "BlackBoard" });
             }
             return View(model);
         }
@@ -137,7 +137,7 @@ namespace DigiClassroom.Controllers
             return RedirectToAction("Index","Home");
         }
         [HttpGet]
-        public IActionResult Home(int id)
+        public IActionResult Home(int id, string loadPartial)
         {
             Classroom Classroom = _classRepo.GetClassroom(id);
             string userId = null;
@@ -159,6 +159,7 @@ namespace DigiClassroom.Controllers
             chvm.ClassroomStudents = _classUserRepo.GetClassroomStudents(id);
             chvm.StudentInvites = _inviteRepo.GetAllInvites(id);
             chvm.Assignments = _assignmentRepo.GetClassAssignments(id);
+            ViewData["loadPartial"] = loadPartial;
             return View(chvm);
         }
         [HttpGet]
@@ -199,7 +200,7 @@ namespace DigiClassroom.Controllers
                 };
                 _boardRepo.Add(newBoard);
             }
-            return RedirectToAction("Home", new { id = model.BlackBoardViewModel.ClassId });
+            return RedirectToAction("Home", new { id = model.BlackBoardViewModel.ClassId, loadPartial = "BlackBoard" });
         }
         public ViewResult BlackBoardIndex()
         {
@@ -222,7 +223,7 @@ namespace DigiClassroom.Controllers
         {
             BlackBoard bb = _boardRepo.GetBlackBoard(id);
             _boardRepo.Delete(bb.Id);
-            return RedirectToAction("Home", new { id = bb.ClassroomId });
+            return RedirectToAction("Home", new { id = bb.ClassroomId, loadPartial = "BlackBoard" });
         }
         [HttpPost]
         public IActionResult InviteStudents(string ClassId, string emails)
@@ -233,6 +234,7 @@ namespace DigiClassroom.Controllers
             string[] Emails = emails.Split(" ");
             foreach (string email in Emails)
             {
+                /*
                 //Send Mail
                 string DigiClassEmailId = "admin email here";
                 string DigiClassPassword = "admin password here";
@@ -266,7 +268,7 @@ namespace DigiClassroom.Controllers
                 client.Disconnect(true);
                 client.Dispose();
                 //Mail sent
-
+                */
                 Invite invite = new Invite
                 {
                     ClassroomId = id,
@@ -274,7 +276,7 @@ namespace DigiClassroom.Controllers
                 };
                 _inviteRepo.Add(invite);
             }
-            return RedirectToAction("Home", new { id = id });
+            return RedirectToAction("Home", new { id = id, loadPartial = "People" });
         }
         public IActionResult AcceptStudentInvite(int id)
         {
@@ -289,7 +291,7 @@ namespace DigiClassroom.Controllers
             };
             _classUserRepo.Add(newClassUser);
             _inviteRepo.Delete(classid, useremail);
-            return RedirectToAction("Home", new { id = classid });
+            return RedirectToAction("Home", new { id = classid, loadPartial = "BlackBoard" });
         }
 
         public IActionResult DeclineStudentInvite(int id)
@@ -333,7 +335,7 @@ namespace DigiClassroom.Controllers
                 };
                 _assignmentRepo.Add(newAssignment);
             }
-            return RedirectToAction("Home", new { id = model.AssignmentViewModel.ClassId });
+            return RedirectToAction("Home", new { id = model.AssignmentViewModel.ClassId, loadPartial = "Assignments" });
         }
         public IActionResult DeleteAssignment(int id)
         {
@@ -351,7 +353,7 @@ namespace DigiClassroom.Controllers
         {
             Assignment a = _assignmentRepo.GetAssignment(id);
             _assignmentRepo.Delete(a.ID);
-            return RedirectToAction("Home", new { id = a.ClassroomID });
+            return RedirectToAction("Home", new { id = a.ClassroomID, loadPartial = "Assignments" });
         }
         [HttpGet]
         public IActionResult SubmitAssignment(int id)
@@ -395,7 +397,7 @@ namespace DigiClassroom.Controllers
                     Files = string.Join(",", files)
                 };
                 _submittedAssignmentRepo.Add(newAssignment);
-                return RedirectToAction("Home", new { id = assignment.ClassroomID });
+                return RedirectToAction("Home", new { id = assignment.ClassroomID, loadPartial = "Assignments" });
             }
             return View("NotFound");
         }

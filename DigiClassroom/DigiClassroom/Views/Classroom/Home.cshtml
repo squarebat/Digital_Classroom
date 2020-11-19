@@ -110,10 +110,11 @@
 
 <script>
     $(document).ready(function () {
-        $("#BlackBoard").show();
+
+        $("#BlackBoard").hide();
         $("#People").hide();
         $("#Assignments").hide();
-
+        $("#@ViewData["loadPartial"]").show();
         $("#ViewBoard").click(function () {
             $("#BlackBoard").show();
             $("#People").hide();
