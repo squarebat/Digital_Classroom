@@ -20,14 +20,14 @@
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link btn test btn-custom" id ="ViewPeople">
-                        People
+                    <button class="nav-link btn test btn-custom" id="ViewAssignments">
+                        Assignments
                     </button>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        Assignments
-                    </a>
+                    <button class="nav-link btn test btn-custom" id="ViewPeople">
+                        People
+                    </button>
                 </li>
             </ul>
 
@@ -59,33 +59,67 @@
         <div id="BlackBoard">
             <partial name="_BlackBoardIndexPartial" view-data="ViewData"/>
         </div>
+        <div id="Assignments">
+            <partial name="_AssignmentPartial" view-data="ViewData"/>
+        </div>
         <div id="People">
             <partial name="_PeoplePartial" view-data="ViewData"/>
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("#BlackBoard").show();
+        $("#People").hide();
+        $("#Assignments").hide();
+
+        $("#ViewBoard").click(function () {
+            $("#BlackBoard").show();
+            $("#People").hide();
+            $("#Assignments").hide();
+        });
+
+        $("#ViewAssignments").click(function () {
+            $("#BlackBoard").hide();
+            $("#People").hide();
+            $("#Assignments").show();
+        });
+
+        $("#ViewPeople").click(function () {
+            $("#BlackBoard").hide();
+            $("#People").show();
+            $("#Assignments").hide();
+        });
+    });
+</script>
+
 <style>
     .btn.active.focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn:active:focus, .btn:focus {
         outline: thin dotted;
         outline-offset: -2px;
     }
+
     .test:focus {
         outline: none !important;
         border-color: transparent !important;
     }
+
     .btn-custom {
         color: #000;
         background-color: #f8f9fa;
     }
-    .btn-custom:hover {
-        color: #fff;
-        background-color: #1b6ec2;
-    }
-    .btn-custom:focus, .btn-custom.focus {
-        color: #fff;
-        background-color: #1b6ec2;
-    }
-    
+
+        .btn-custom:hover {
+            color: #fff;
+            background-color: #1b6ec2;
+        }
+
+        .btn-custom:focus, .btn-custom.focus {
+            color: #fff;
+            background-color: #1b6ec2;
+        }
+
     body .btn {
         outline: 0;
     }
@@ -103,20 +137,3 @@
         box-shadow: none;
     }
 </style>
-<script>
-    $(document).ready(function () {
-        $("#BlackBoard").show();
-        $("#People").hide();
-
-        $("#ViewBoard").click(function () {
-            $("#BlackBoard").show();
-            $("#People").hide();
-        });
-
-        $("#ViewPeople").click(function () {
-            $("#BlackBoard").hide();
-            $("#People").show();
-        });
-    });
-</script>
-

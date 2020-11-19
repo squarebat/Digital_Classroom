@@ -4,14 +4,16 @@ using DigiClassroom.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DigiClassroom.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201117160113_assignment-db")]
+    partial class assignmentdb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,37 +141,6 @@ namespace DigiClassroom.Data.Migrations
                     b.HasIndex("ClassroomId");
 
                     b.ToTable("Invites");
-                });
-
-            modelBuilder.Entity("DigiClassroom.Models.SubmittedAssignment", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AppUserID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AssignmentID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Files")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AppUserID");
-
-                    b.HasIndex("AssignmentID");
-
-                    b.ToTable("SubmittedAssignments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -432,19 +403,6 @@ namespace DigiClassroom.Data.Migrations
                     b.HasOne("DigiClassroom.Models.Classroom", "Classroom")
                         .WithMany()
                         .HasForeignKey("ClassroomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DigiClassroom.Models.SubmittedAssignment", b =>
-                {
-                    b.HasOne("DigiClassroom.Models.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserID");
-
-                    b.HasOne("DigiClassroom.Models.Assignment", "Assignment")
-                        .WithMany()
-                        .HasForeignKey("AssignmentID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

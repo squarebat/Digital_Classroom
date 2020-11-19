@@ -24,18 +24,23 @@ namespace DigiClassroom.Controllers
         private readonly IClassroomUserRepository _classUserRepo;
         private readonly IBlackBoardRepository _boardRepo;
         private readonly IInviteRepository _inviteRepo;
+        private readonly IAssignmentRepository _assignmentRepo;
+        private readonly ISubmittedAssignmentRepository _submittedAssignmentRepo; 
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
         //private readonly System.Web.Mvc.HtmlHelper _htmlHelper;
         public ClassroomController(IClassroomRepository classRepo,IClassroomUserRepository classUser, 
-            IBlackBoardRepository boardRepo, IInviteRepository inviteRepo, IHostingEnvironment hostingEnvironment,
-            UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+            IBlackBoardRepository boardRepo, IInviteRepository inviteRepo, IAssignmentRepository assignmentRepo, 
+            ISubmittedAssignmentRepository submittedAssignmentRepo,
+            IHostingEnvironment hostingEnvironment, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _classRepo = classRepo;
             _classUserRepo = classUser;
             _boardRepo = boardRepo;
             _inviteRepo = inviteRepo;
+            _assignmentRepo = assignmentRepo;
+            _submittedAssignmentRepo = submittedAssignmentRepo;
             _hostingEnvironment = hostingEnvironment;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -144,7 +149,13 @@ namespace DigiClassroom.Controllers
         public IActionResult Home(int id)
         {
             Classroom Classroom = _classRepo.GetClassroom(id);
-            if (Classroom == null)
+            string userId = null;
+            if (_signInManager.IsSignedIn(HttpContext.User))
+            {
+                userId = _userManager.GetUserId(HttpContext.User);
+            }
+            ClassroomUser classUser = _classUserRepo.GetClassroomUser(id, userId);
+            if (Classroom == null || classUser == null)
             {
                 Response.StatusCode = 404;
                 return View("NotFound");
@@ -152,9 +163,11 @@ namespace DigiClassroom.Controllers
             ClassroomHomeViewModel chvm = new ClassroomHomeViewModel();
             chvm.Classroom = Classroom;
             chvm.BlackBoards = _boardRepo.GetClassBlackBoards(id);
+            chvm.ClassroomUserRole = classUser.Role;
             chvm.ClassroomMentors = _classUserRepo.GetClassroomMentors(id);
             chvm.ClassroomStudents = _classUserRepo.GetClassroomStudents(id);
             chvm.StudentInvites = _inviteRepo.GetAllInvites(id);
+            chvm.Assignments = _assignmentRepo.GetClassAssignments(id);
             return View(chvm);
         }
         [HttpGet]
@@ -294,6 +307,140 @@ namespace DigiClassroom.Controllers
             string useremail = _userManager.FindByIdAsync(userId).Result.Email;
             _inviteRepo.Delete(classid, useremail);
             return RedirectToAction("Index","Home");
+        }
+
+        public IActionResult NewAssignment(ClassroomHomeViewModel model)
+        {
+            string Id = null;
+            if (_signInManager.IsSignedIn(HttpContext.User))
+            {
+                Id = _userManager.GetUserId(HttpContext.User);
+            }
+            if (ModelState.IsValid)
+            {
+                string filename = null;
+                List<string> files = new List<string>();
+                if (model.AssignmentViewModel.Files != null)
+                {
+                    foreach (IFormFile file in model.AssignmentViewModel.Files)
+                    {
+                        string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "posted_assignments");
+                        filename = Guid.NewGuid().ToString() + "_" + file.FileName;
+                        files.Add(filename);
+                        string filePath = Path.Combine(uploadsFolder, filename);
+                        file.CopyTo(new FileStream(filePath, FileMode.Create));
+                    }
+                }
+                Assignment newAssignment = new Assignment
+                {
+                    ClassroomID = Convert.ToInt32(model.AssignmentViewModel.ClassId),
+                    AppUserID = Id,
+                    Title = model.AssignmentViewModel.Title,
+                    Description = model.AssignmentViewModel.Description,
+                    Files = string.Join(",", files)
+                };
+                _assignmentRepo.Add(newAssignment);
+            }
+            return RedirectToAction("Home", new { id = model.AssignmentViewModel.ClassId });
+        }
+        public IActionResult DeleteAssignment(int id)
+        {
+            Assignment a = _assignmentRepo.GetAssignment(id);
+            if (a == null)
+            {
+                return View("NotFound");
+            }
+            return View(a);
+        }
+        [HttpPost, ActionName("DeleteAssignment")]
+        public IActionResult AssignmentDeleteConfirmed(int id)
+        {
+            Assignment a = _assignmentRepo.GetAssignment(id);
+            _assignmentRepo.Delete(a.ID);
+            return RedirectToAction("Home", new { id = a.ClassroomID });
+        }
+        [HttpGet]
+        public IActionResult SubmitAssignment(int id)
+        {
+            ViewData["AssignmentId"] = id;
+            Assignment assignment = _assignmentRepo.GetAssignment(id);
+            ViewBag.ClassId = assignment.ClassroomID;
+            return View();
+        }
+        [Authorize]
+        [HttpPost]
+        public IActionResult SubmitAssignment(SubmitAssignmentViewModel model)
+        {
+            string userId = null;
+            if (_signInManager.IsSignedIn(HttpContext.User))
+            {
+                userId = _userManager.GetUserId(HttpContext.User);
+            }
+            if (ModelState.IsValid)
+            {
+                Assignment assignment = _assignmentRepo.GetAssignment(Convert.ToInt32(model.AssignmentID));
+                string filename = null;
+                List<string> files = new List<string>();
+                if (model.Files != null)
+                {
+                    foreach (IFormFile file in model.Files)
+                    {
+                        string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "submitted_assignments");
+                        filename = Guid.NewGuid().ToString() + "_" + file.FileName;
+                        files.Add(filename);
+                        string filePath = Path.Combine(uploadsFolder, filename);
+                        file.CopyTo(new FileStream(filePath, FileMode.Create));
+                    }
+                }
+                SubmittedAssignment newAssignment = new SubmittedAssignment
+                {
+                    AssignmentID = Convert.ToInt32(model.AssignmentID),
+                    AppUserID = userId,
+                    Title = assignment.Title,
+                    Description = model.Description,
+                    Files = string.Join(",", files)
+                };
+                _submittedAssignmentRepo.Add(newAssignment);
+                return RedirectToAction("Home", new { id = assignment.ClassroomID });
+            }
+            return View("NotFound");
+        }
+        [Authorize]
+        public IActionResult ViewSubmissions(int id)
+        {
+            string userId = null;
+            if (_signInManager.IsSignedIn(HttpContext.User))
+            {
+                userId = _userManager.GetUserId(HttpContext.User);
+            }
+            Assignment assignment = _assignmentRepo.GetAssignment(id);
+            if (assignment == null)
+            {
+                return View("NotFound");
+            }
+            ClassroomUser classroomUser = _classUserRepo.GetClassroomUser(assignment.ClassroomID, userId);
+            if (classroomUser == null)
+            {
+                return View("NotFound");
+            }
+            ViewData["AssignmentTitle"] = assignment.Title;
+            ViewData["Role"] = classroomUser.Role;
+            ViewBag.ClassId = assignment.ClassroomID;
+            IEnumerable<SubmittedAssignment> assignments = null;
+            if (classroomUser.Role == "Mentor")
+            {
+                ViewData["EmptyMessage"] = "No submissions right now T-T. Check again later.";
+                IEnumerable<ClassroomUser> notSubmitted = _submittedAssignmentRepo.GetPeopleNotSubmitted(id);
+                ViewData["Count"] = notSubmitted.Count();
+                ViewBag.RemainingPeople = notSubmitted;
+                assignments = _submittedAssignmentRepo.GetSubmittedAssignments(id);
+            }
+            if (classroomUser.Role == "Student")
+            {
+                ViewData["EmptyMessage"] = "You haven't made any submissions yet -.- !";
+                assignments = _submittedAssignmentRepo.GetUserSubmittedAssignments(id, userId);
+            }
+            return View(assignments);
         }
     }
 }

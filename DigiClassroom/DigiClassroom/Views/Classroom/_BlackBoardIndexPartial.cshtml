@@ -60,10 +60,13 @@
                     </a>
                     <br />
                 }
+                <br/>
             }
-            <a class="text-danger" asp-controller="Classroom" asp-action="DeleteBlackBoard" asp-route-id="@item.Id">Delete this Post</a>
+            @if (Model.ClassroomUserRole == "Mentor")
+            {
+                <a class="text-danger" asp-controller="Classroom" asp-action="DeleteBlackBoard" asp-route-id="@item.Id">Delete this Post</a>
+            }
         </div>
-        <br />
     }
 
 </div>

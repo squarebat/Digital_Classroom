@@ -35,6 +35,7 @@ namespace DigiClassroom.Data
         public DbSet<ClassroomUser> ClassroomUsers { get; set; }
         public DbSet<BlackBoard> BlackBoards { get; set; }
         public DbSet<Invite> Invites { get; set; }
-
+        public DbSet<Assignment> Assignments { get; set; }
+        public DbSet<SubmittedAssignment> SubmittedAssignments { get; set; }
     }
 }

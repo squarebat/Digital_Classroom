@@ -24,6 +24,8 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\blackboard\" />
+    <Folder Include="wwwroot\submitted_assignments\" />
+    <Folder Include="wwwroot\posted_assignments\" />
   </ItemGroup>
   
 <ItemGroup>

@@ -8,6 +8,6 @@ namespace DigiClassroom.ViewModels
     public class HomeViewModel
     {
         public IEnumerable<Invite> Invites { get; set; }
-        public IEnumerable<Classroom> Classrooms { get; set; }
+        public IEnumerable<ClassroomUser> UserClassrooms { get; set; }
     }
 }

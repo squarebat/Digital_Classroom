@@ -19,13 +19,15 @@ namespace DigiClassroom.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IClassroomRepository _classRepo;
         private readonly IInviteRepository _inviteRepo;
+        private readonly IClassroomUserRepository _classroomUserRepo;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, IClassroomRepository classRepo, IInviteRepository inviteRepo, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        public HomeController(ILogger<HomeController> logger, IClassroomRepository classRepo, IInviteRepository inviteRepo, IClassroomUserRepository classroomUserRepo, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
         {
             _logger = logger;
             _classRepo = classRepo;
+            _classroomUserRepo = classroomUserRepo;
             _signInManager = signInManager;
             _userManager = userManager;
             _inviteRepo = inviteRepo;
@@ -40,7 +42,7 @@ namespace DigiClassroom.Controllers
                 HomeViewModel hvm = new HomeViewModel
                 {
                     Invites = _inviteRepo.GetUserInvites(user_email),
-                    Classrooms = _classRepo.GetAllClassrooms()
+                    UserClassrooms = _classroomUserRepo.GetUserClassrooms(id)
                 };
                 return View(hvm);
             }

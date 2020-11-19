@@ -12,11 +12,12 @@
 </div>
 @if (SignInManager.IsSignedIn(User))
 {
-    <div class="row">
-        <div class="col-sm-3 light-grey-box">
-            <partial name="_NotificationsPartial" />
-        </div>
-        <div class="col-sm-9">
-        </div>
+<div class="row">
+    <div class="col-sm-9">
+        <partial name="_ClassesPartial" />
     </div>
+    <div class="col-sm-3 light-grey-box">
+        <partial name="_NotificationsPartial" />
+    </div>
+</div>
 }
