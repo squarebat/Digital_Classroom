@@ -25,7 +25,8 @@ namespace DigiClassroom.Controllers
         private readonly IBlackBoardRepository _boardRepo;
         private readonly IInviteRepository _inviteRepo;
         private readonly IAssignmentRepository _assignmentRepo;
-        private readonly ISubmittedAssignmentRepository _submittedAssignmentRepo; 
+        private readonly ISubmittedAssignmentRepository _submittedAssignmentRepo;
+        private readonly ICommentRepository _commentRepo;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
@@ -33,6 +34,7 @@ namespace DigiClassroom.Controllers
         public ClassroomController(IClassroomRepository classRepo,IClassroomUserRepository classUser, 
             IBlackBoardRepository boardRepo, IInviteRepository inviteRepo, IAssignmentRepository assignmentRepo, 
             ISubmittedAssignmentRepository submittedAssignmentRepo,
+            ICommentRepository commentRepo,
             IHostingEnvironment hostingEnvironment, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _classRepo = classRepo;
@@ -41,6 +43,7 @@ namespace DigiClassroom.Controllers
             _inviteRepo = inviteRepo;
             _assignmentRepo = assignmentRepo;
             _submittedAssignmentRepo = submittedAssignmentRepo;
+            _commentRepo = commentRepo;
             _hostingEnvironment = hostingEnvironment;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -154,6 +157,12 @@ namespace DigiClassroom.Controllers
             ClassroomHomeViewModel chvm = new ClassroomHomeViewModel();
             chvm.Classroom = Classroom;
             chvm.BlackBoards = _boardRepo.GetClassBlackBoards(id);
+            List<List<Comment>> Comments = new List<List<Comment>>();
+            foreach (BlackBoard bb in chvm.BlackBoards)
+            {
+                Comments.Add(_commentRepo.GetBlackBoardComments(bb.Id).ToList());
+            }
+            chvm.Comments = Comments;
             chvm.ClassroomUserRole = classUser.Role;
             chvm.ClassroomMentors = _classUserRepo.GetClassroomMentors(id);
             chvm.ClassroomStudents = _classUserRepo.GetClassroomStudents(id);
@@ -449,6 +458,26 @@ namespace DigiClassroom.Controllers
                 _classUserRepo.Delete(chvm.Classroom.ID, userId);
             }
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult AddComment(ClassroomHomeViewModel model)
+        {
+            string Id = null;
+            int classId = 0;
+            if (_signInManager.IsSignedIn(HttpContext.User))
+            {
+                Id = _userManager.GetUserId(HttpContext.User);
+                Comment newComment = new Comment
+                {
+                    AppUserId = Id,
+                    BlackBoardId = model.Comment.BlackBoardId,
+                    TimeCreated = DateTime.Now,
+                    Content = model.Comment.Content,
+                };
+                classId = _boardRepo.GetBlackBoard(model.Comment.BlackBoardId).ClassroomId;
+                _commentRepo.Add(newComment);
+            }            
+            return RedirectToAction("Home", new { id = classId, loadPartial = "BlackBoard" });
         }
     }    
 }

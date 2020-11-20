@@ -47,6 +47,8 @@ namespace DigiClassroom
             services.AddScoped<IInviteRepository, SQLInviteRepository>();
             services.AddScoped<IAssignmentRepository, SQLAssignmentRepository>();
             services.AddScoped<ISubmittedAssignmentRepository, SQLSubmittedAssignmentRepository>();
+            services.AddScoped<ICommentRepository, SQLCommentRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

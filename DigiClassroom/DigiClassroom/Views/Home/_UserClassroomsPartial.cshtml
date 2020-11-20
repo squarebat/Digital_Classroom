@@ -3,7 +3,7 @@
 <h4>Your Classrooms</h4>
 @if (Model.UserClassrooms.Count() == 0)
 {
-    <span class="text-muted">You haven't joined any classrooms yet. Check notifications for invites or Create a classroom right now!</span>
+    <span class="text-muted">You aren't enrolled in any classroom currently. Check notifications for invites or Create a classroom right now!</span><br/>
 }
 <a asp-controller="Classroom" asp-action="Create">Create a new classroom</a>
 <br />

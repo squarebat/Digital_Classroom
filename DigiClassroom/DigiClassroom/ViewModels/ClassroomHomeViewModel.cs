@@ -7,6 +7,7 @@ namespace DigiClassroom.ViewModels
 {
     public class ClassroomHomeViewModel
     {
+        public int ClassId { get; set; }
         public Classroom Classroom { get; set; }
         public string ClassroomUserRole { get; set; }
         public IEnumerable<BlackBoard> BlackBoards { get; set; }
@@ -16,5 +17,7 @@ namespace DigiClassroom.ViewModels
         public IEnumerable<Assignment> Assignments { get; set; }
         public BlackBoardViewModel BlackBoardViewModel { get; set; }
         public AssignmentViewModel AssignmentViewModel { get; set; }
+        public Comment Comment { get; set; }
+        public List<List<Comment>> Comments { get; set; }
     }
 }

@@ -40,8 +40,12 @@
 </div>
 
 <div>
+    @{ 
+        int index = -1;
+    } 
     @foreach (var item in Model.BlackBoards)
     {
+        index += 1;
         AppUser user = await _userManager.FindByIdAsync(item.AppUserId);
     <div class="content-block">
         <h6>@user</h6>
@@ -74,6 +78,21 @@
             <hr/>
             <a class="text-danger" asp-controller="Classroom" asp-action="DeleteBlackBoard" asp-route-id="@item.Id">Delete this Post</a>
         }
+        <hr/>
+        <div style="background-color: #eeeeee;padding:20px;height:100%;width:100%;border-bottom-left-radius:inherit;border-bottom-right-radius:inherit">
+            <form class="form-inline" asp-action="AddComment" method="post">
+                <input type="hidden" asp-for="@Model.Comment.BlackBoardId" value="@item.Id" />
+                <input style="width:750px" type="text" class="form-control" asp-for="@Model.Comment.Content" placeholder="Comment on this Post..." />
+                <input type="submit" value="Submit" class="btn btn-light" />
+            </form>
+            @foreach (Comment comment in Model.Comments[index])
+            { 
+                <hr/>
+                <span><b>@comment.AppUser.UserName</b>&nbsp;&nbsp;@comment.TimeCreated.Date.ToLongDateString()</span><br/><br/>
+                <p>@comment.Content</p>
+                <a class="text-danger" href="#">Delete</a>
+            }
+        </div>
     </div>
         <br/>
     }

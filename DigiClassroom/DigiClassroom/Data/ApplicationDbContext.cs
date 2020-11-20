@@ -40,5 +40,6 @@ namespace DigiClassroom.Data
         public DbSet<Invite> Invites { get; set; }
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<SubmittedAssignment> SubmittedAssignments { get; set; }
+        public DbSet<Comment> Comments { get; set; }
     }
 }
