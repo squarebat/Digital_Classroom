@@ -243,10 +243,9 @@ namespace DigiClassroom.Controllers
             string[] Emails = emails.Split(" ");
             foreach (string email in Emails)
             {
-                /*
                 //Send Mail
-                string DigiClassEmailId = "admin email here";
-                string DigiClassPassword = "admin password here";
+                string DigiClassEmailId = "emailid";
+                string DigiClassPassword = "password";
                 MimeMessage message = new MimeMessage();
                 MailboxAddress from = new MailboxAddress(user.UserName, DigiClassEmailId);
                 message.From.Add(from);
@@ -277,7 +276,7 @@ namespace DigiClassroom.Controllers
                 client.Disconnect(true);
                 client.Dispose();
                 //Mail sent
-                */
+                
                 Invite invite = new Invite
                 {
                     ClassroomId = id,

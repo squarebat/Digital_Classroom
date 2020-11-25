@@ -90,7 +90,10 @@
                 <hr/>
                 <span><b>@comment.AppUser.UserName</b>&nbsp;&nbsp;@comment.TimeCreated.Date.ToLongDateString()</span><br/><br/>
                 <p>@comment.Content</p>
-                <a class="text-danger" href="#">Delete</a>
+                @if (Model.ClassroomUserRole == "Mentor")
+                {
+                    <a class="text-danger" href="#">Delete</a>
+                }
             }
         </div>
     </div>
